@@ -17,7 +17,6 @@ const RootLayout = () => {
           </div>
         </div>
       </div>
-      <Outlet />
     </Fragment>
   );
 };

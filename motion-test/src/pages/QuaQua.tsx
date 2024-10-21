@@ -1,16 +1,34 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Modal from "../components/Modal";
 
 import Scratch from "../components/Scratch";
 import IMG from "../assets/img_002.jpg";
 
 const QuaQuaPage = () => {
+  useEffect(() => {
+    document.getElementsByTagName("body")[0].style.overflow = "hidden";
+
+    return () => {
+      document.getElementsByTagName("body")[0].style.overflow = "auto";
+    };
+  }, []);
+
   const scratchRef = useRef<typeof Scratch.Area>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const onClickReset = () => {
     if (scratchRef.current) {
       scratchRef.current.reset();
     }
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -20,30 +38,34 @@ const QuaQuaPage = () => {
         whileHover={{ scale: 1.1, backgroundColor: "#aeb6bf", color: "#000" }}
         whileTap={{ scale: 0.9 }}
         // transition={{ type: "spring", stiffness: 500 }}
-        onClick={onClickReset}
+        onClick={handleOpenModal}
       >
         New One
       </motion.button>
-      <Scratch>
-        <Scratch.Area
-          ref={scratchRef}
-          width={320}
-          height={226}
-          image={IMG}
-          finishPercent={40}
-          onComplete={() => console.log("complete")}
-          brushSize={20}
-          // customBrush={CUSTOM_BRUSH_PRESET}
-        >
-          <div className="flex size-full items-center justify-center bg-gray-400 bg-opacity-10">
-            <h1 className="text-center font-bold">
-              沒有，不可能中獎的
-              <br />
-              笑死
-            </h1>
-          </div>
-        </Scratch.Area>
-      </Scratch>
+
+      {isModalOpen && (
+        <Modal onClose={handleCloseModal}>
+          <Scratch>
+            <Scratch.Area
+              ref={scratchRef}
+              width={320}
+              height={226}
+              image={IMG}
+              finishPercent={40}
+              onComplete={() => console.log("complete")}
+              brushSize={20}
+            >
+              <div className="flex size-full items-center justify-center bg-gray-400 bg-opacity-10">
+                <h1 className="text-center font-bold">
+                  沒有，不可能中獎的
+                  <br />
+                  笑死
+                </h1>
+              </div>
+            </Scratch.Area>
+          </Scratch>
+        </Modal>
+      )}
     </div>
   );
 };

@@ -194,6 +194,7 @@ class ScratchArea extends Component<Props, State> {
   }
 
   handleMouseDown = (e: any) => {
+    e.preventDefault(); // 防止頁面滑動
     this.isDrawing = true;
     this.lastPoint = this.getMouse(e, this.canvas);
   };
