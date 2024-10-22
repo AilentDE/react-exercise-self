@@ -17,6 +17,16 @@ const Header = () => {
         >
           QuaQua
         </NavLink>
+        <NavLink
+          to="lottie"
+          className={({ isActive }) =>
+            isActive
+              ? " text-blue-500 font-bold"
+              : " hover:text-blue-400 font-bold"
+          }
+        >
+          Lottie
+        </NavLink>
       </div>
     </header>
   );
