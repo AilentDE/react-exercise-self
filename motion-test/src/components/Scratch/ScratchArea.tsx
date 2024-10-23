@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component, ReactNode, SyntheticEvent } from "react";
 
 type Point = {
   x: number;
@@ -6,7 +6,7 @@ type Point = {
 };
 
 export type CustomBrush = {
-  image: any;
+  image: string;
   width: number;
   height: number;
 };
@@ -21,13 +21,13 @@ type CustomCheckZone = {
 interface Props {
   width: number;
   height: number;
-  image: any;
+  image: string;
   quality?: number;
   finishPercent?: number;
   onComplete?: () => void;
   brushSize?: number;
   fadeOutOnComplete?: boolean;
-  children?: any;
+  children?: ReactNode;
   customBrush?: CustomBrush;
   customCheckZone?: CustomCheckZone;
 }
@@ -42,19 +42,20 @@ class ScratchArea extends Component<Props, State> {
 
   lastPoint: Point | null = null;
 
-  ctx: CanvasRenderingContext2D;
+  ctx: CanvasRenderingContext2D | null = null;
 
   canvas!: HTMLCanvasElement;
 
-  brushImage?: any;
+  brushImage?: HTMLImageElement;
 
-  image: HTMLImageElement;
+  image: HTMLImageElement = new Image();
 
   isFinished: boolean = false;
 
-  quality: number;
-  canvasWidth: number;
-  canvasHeight: number;
+  quality: number = 1;
+  canvasWidth: number = 0;
+  canvasHeight: number = 0;
+  drawImage: () => void = () => {};
 
   constructor(props: Props) {
     super(props);
@@ -75,6 +76,9 @@ class ScratchArea extends Component<Props, State> {
       this.setState({ loaded: true });
     };
     this.drawImage = () => {
+      if (!this.ctx) {
+        return;
+      }
       this.ctx.drawImage(this.image, 0, 0, this.canvasWidth, this.canvasHeight);
     };
 
@@ -90,6 +94,9 @@ class ScratchArea extends Component<Props, State> {
   }
 
   reset = () => {
+    if (!this.ctx) {
+      return;
+    }
     this.canvas.style.opacity = "1";
     this.ctx.globalCompositeOperation = "source-over";
     this.ctx.drawImage(this.image, 0, 0, this.canvasWidth, this.canvasHeight);
@@ -113,14 +120,17 @@ class ScratchArea extends Component<Props, State> {
       height = this.props.customCheckZone.height;
     }
 
+    if (!this.ctx) {
+      return 0;
+    }
+
     const pixels = this.ctx.getImageData(x, y, width, height);
 
     const total = pixels.data.length / stride;
     let count = 0;
 
     for (let i = 0; i < pixels.data.length; i += stride) {
-      // @ts-ignore
-      if (parseInt(pixels.data[i], 10) === 0) {
+      if (parseInt(pixels.data[i].toString(), 10) === 0) {
         count++;
       }
     }
@@ -128,22 +138,32 @@ class ScratchArea extends Component<Props, State> {
     return Math.round((count / total) * 100);
   }
 
-  getMouse(e: any, canvas: HTMLCanvasElement) {
+  getMouse(e: MouseEvent, canvas: HTMLCanvasElement) {
     const { top, left } = canvas.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft =
-      window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollLeft = document.documentElement.scrollLeft;
 
     let x = 0;
     let y = 0;
 
-    if (e && e.pageX && e.pageY) {
-      x = e.pageX - left - scrollLeft;
-      y = e.pageY - top - scrollTop;
-    } else if (e && e.touches) {
-      x = e.touches[0].clientX - left - scrollLeft;
-      y = e.touches[0].clientY - top - scrollTop;
-    }
+    x = e.pageX - left - scrollLeft;
+    y = e.pageY - top - scrollTop;
+
+    x = x * this.quality;
+    y = y * this.quality;
+
+    return { x, y };
+  }
+  getTouch(e: TouchEvent, canvas: HTMLCanvasElement) {
+    const { top, left } = canvas.getBoundingClientRect();
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollLeft = document.documentElement.scrollLeft;
+
+    let x = 0;
+    let y = 0;
+
+    x = e.touches[0].pageX - left - scrollLeft;
+    y = e.touches[0].pageY - top - scrollTop;
 
     x = x * this.quality;
     y = y * this.quality;
@@ -193,20 +213,28 @@ class ScratchArea extends Component<Props, State> {
     }
   }
 
-  handleMouseDown = (e: any) => {
-    e.preventDefault(); // 防止頁面滑動
+  handleMouseDown = (e: SyntheticEvent) => {
     this.isDrawing = true;
-    this.lastPoint = this.getMouse(e, this.canvas);
+
+    if (e.nativeEvent instanceof MouseEvent) {
+      this.lastPoint = this.getMouse(e.nativeEvent, this.canvas);
+    } else if (e.nativeEvent instanceof TouchEvent) {
+      this.lastPoint = this.getTouch(e.nativeEvent, this.canvas);
+    }
   };
 
-  handleMouseMove = (e: any) => {
+  handleMouseMove = (e: SyntheticEvent) => {
     if (!this.isDrawing) {
       return;
     }
 
     // e.preventDefault();
-
-    const currentPoint = this.getMouse(e, this.canvas);
+    let currentPoint = { x: 0, y: 0 };
+    if (e.nativeEvent instanceof MouseEvent) {
+      currentPoint = this.getMouse(e.nativeEvent, this.canvas);
+    } else if (e.nativeEvent instanceof TouchEvent) {
+      currentPoint = this.getTouch(e.nativeEvent, this.canvas);
+    }
     const distance = this.distanceBetween(this.lastPoint, currentPoint);
     const angle = this.angleBetween(this.lastPoint, currentPoint);
 
@@ -215,6 +243,9 @@ class ScratchArea extends Component<Props, State> {
     for (let i = 0; i < distance; i++) {
       x = this.lastPoint ? this.lastPoint.x + Math.sin(angle) * i : 0;
       y = this.lastPoint ? this.lastPoint.y + Math.cos(angle) * i : 0;
+      if (!this.ctx) {
+        return;
+      }
       this.ctx.globalCompositeOperation = "destination-out";
 
       if (this.brushImage && this.props.customBrush) {
@@ -269,7 +300,7 @@ class ScratchArea extends Component<Props, State> {
       <div className="ScratchCard__Container" style={containerStyle}>
         {this.state.loaded && (
           <canvas
-            ref={(ref: any) => {
+            ref={(ref: HTMLCanvasElement) => {
               if (ref) {
                 this.canvas = ref;
                 this.ctx = this.canvas.getContext(

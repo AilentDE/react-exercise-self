@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Modal from "../components/Modal";
 
@@ -14,14 +14,7 @@ const QuaQuaPage = () => {
     };
   }, []);
 
-  const scratchRef = useRef<typeof Scratch.Area>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  const onClickReset = () => {
-    if (scratchRef.current) {
-      scratchRef.current.reset();
-    }
-  };
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -47,7 +40,6 @@ const QuaQuaPage = () => {
         <Modal onClose={handleCloseModal}>
           <Scratch>
             <Scratch.Area
-              ref={scratchRef}
               width={320}
               height={226}
               image={IMG}
