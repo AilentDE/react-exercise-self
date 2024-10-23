@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import Lottie from "lottie-react";
 import FireworkAnimation from "../assets/animate/firework-animation.json";
-import ScratchAnimate from "../assets/animate/scratch-animation.json";
+import ScratchAnimate from "../assets/animate/scratch-animation-fixed.json";
 
 import Coin from "../assets/images/coin.svg";
 import Spark from "../assets/images/spark.svg";
@@ -12,18 +12,12 @@ const LottieScratchPage = () => {
   const [showScratch, setShowScratch] = useState(false);
   const [showFirework, setShowFirework] = useState(false);
 
-  const overlayRef = useRef();
-  const scratchRef = useRef();
-  const fireworkRef = useRef();
-
   const handleScratch = () => {
-    overlayRef.current.style.cursor = "default";
     setShowScratch(true);
   };
 
   const showFireworks = () => {
-    overlayRef.current.style.display = "none";
-    setShowScratch(false);
+    // setShowScratch(false);
     setShowFirework(true);
   };
 
@@ -103,14 +97,7 @@ const LottieScratchPage = () => {
             <div className={classes.title}>iRent 刮刮樂</div>
           </div>
           <div className={classes.scratchArea}>
-            <div ref={overlayRef} className={classes.overlay}>
-              {!showScratch && (
-                <span className={classes.maskText} onClick={handleScratch}>
-                  點我！
-                </span>
-              )}
-            </div>
-            {showScratch && (
+            {showScratch ? (
               <Lottie
                 style={{
                   position: "absolute",
@@ -120,13 +107,21 @@ const LottieScratchPage = () => {
                   height: "100%",
                   pointerEvents: "none",
                   zIndex: 3,
+                  display: showFirework ? "none" : "block",
                 }}
-                lottieRef={scratchRef}
                 animationData={ScratchAnimate}
                 loop={false}
                 autoPlay={true}
                 onComplete={showFireworks}
               />
+            ) : (
+              <div className={classes.overlay}>
+                {!showScratch && (
+                  <span className={classes.maskText} onClick={handleScratch}>
+                    點我！
+                  </span>
+                )}
+              </div>
             )}
             <div className={classes.scratchMessage}>
               <div className={classes.couponTitle}>
@@ -146,7 +141,6 @@ const LottieScratchPage = () => {
       {showFirework && (
         <Lottie
           className={classes.fireworkAnimation}
-          lottieRef={fireworkRef}
           animationData={FireworkAnimation}
           loop={false}
           autoPlay={true}
