@@ -1,45 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
+import useUserLocation from "../hooks/useUserLocation";
+import { defaultCenter } from "../utils/config";
 import { PLACES } from "../store/places";
 import IconFooding from "../components/ui/icons/IconFooding";
 import MarkerWithInfoWindow from "../components/MarkerWithInfoWindow";
 
-const defaultCenter = { lat: 25.033, lng: 121.5654 };
+const center = { ...defaultCenter };
 
 const GoogleMapPage = () => {
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const { userLocation } = useUserLocation();
 
   const handleMapEvent = useCallback((event: object) => {
     console.log("camera change:", event);
   }, []);
 
-  useEffect(() => {
-    const getUserLocation = async () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setUserLocation({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
-          },
-          () => {
-            console.error("Can't get user location.");
-            setUserLocation(null);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-        setUserLocation(null);
-      }
-    };
-
-    getUserLocation();
-  }, []);
+  if (userLocation) {
+    center.lat = userLocation.lat;
+    center.lng = userLocation.lng;
+  }
 
   return (
     <>
@@ -47,7 +27,7 @@ const GoogleMapPage = () => {
         <Map
           mapId="food-map"
           className="size-full"
-          defaultCenter={userLocation || defaultCenter}
+          defaultCenter={center}
           defaultZoom={15}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
