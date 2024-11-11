@@ -1,50 +1,85 @@
-# React + TypeScript + Vite
+# Map Integration Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project demonstrates the implementation of four different map libraries: Google Maps, Azure Maps, Leaflet, and Map8 (Taiwan Map).
 
-Currently, two official plugins are available:
+All maps implement custom markers and pop-up windows that appear upon clicking.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Structure
 
-## Expanding the ESLint configuration
+The project uses React Router for navigation and includes the following main components and pages:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Google**: The page demonstrating Google Maps integration.
+- **Leaflet**: The page demonstrating Leaflet integration.
+- **Map8**: The page demonstrating Map8 (Taiwan Map) integration.
+- **Azure**: The page demonstrating Azure Maps integration.
 
-- Configure the top-level `parserOptions` property like this:
+## Screenshots
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Google
+
+![alt text](src/assets/Map_Google.png)
+
+### Leaflet
+
+![alt text](src/assets/Map_Leaflet.png)
+
+### Map8
+
+![alt text](src/assets/Map_Map8.png)
+
+### Azure
+
+![alt text](src/assets/Map_Azure.png)
+
+## Routes
+
+The routes are defined in `appRouter.tsx` as follows:
+
+- `/`: Home page
+- `/google`: Google Maps page
+- `/leaflet`: Leaflet page
+- `/map8`: Map8 (Taiwan Map) page
+- `/azure`: Azure Maps page
+
+## Getting Started
+
+To run this project locally, follow these steps:
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/AilentDE/react-exercise-self.git
+cd react-exercise-self/pratice-map-module
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```sh
+npm install
 ```
+
+3. Create enviroment file `.env` with keys:
+
+```
+VITE_GOOGLE_MAP_KEY=
+VITE_MAP8_KEY=
+VITE_AZURE_MAP_KEY=
+```
+
+4. Start the development server:
+
+```sh
+npm run dev
+```
+
+5. Open your browser and navigate to `http://localhost:3000`.
+
+## Library Documentation
+
+| Library Name      | Documentation URL                                                                     | Version |
+| ----------------- | ------------------------------------------------------------------------------------- | ------- |
+| Google            | https://visgl.github.io/react-google-maps/                                            | 1.3.1   |
+| Leaflet           | https://react-leaflet.js.org/                                                         | 2.9.4   |
+| Map8              | https://www.map8.zone/vector/index                                                    | null    |
+| Azure             | https://azure.github.io/react-azure-maps/index.html                                   | 1.0.0   |
+| Azure(playground) | https://azure.github.io/react-azure-maps-playground/?path=/docs/getting-started--docs | null    |
