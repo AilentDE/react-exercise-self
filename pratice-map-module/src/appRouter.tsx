@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Google from "./pages/Google";
 import Leaflet from "./pages/Leaflet";
 import Map8 from "./pages/Map8";
+import Azure from "./pages/Azure";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "map8",
         element: <Map8 />,
+      },
+      {
+        path: "azure",
+        element: <Azure />,
       },
     ],
   },

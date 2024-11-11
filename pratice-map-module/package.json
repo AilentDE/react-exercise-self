@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "@vis.gl/react-google-maps": "^1.3.0",
+    "azure-maps-control": "^3.5.0",
+    "install": "^0.13.0",
     "leaflet": "^1.9.4",
+    "npm": "^10.9.0",
     "react": "^18.3.1",
+    "react-azure-maps": "^1.0.0",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.27.0"

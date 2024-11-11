@@ -4,6 +4,7 @@ const headerLinks = [
   { path: "/google", text: "Google" },
   { path: "/leaflet", text: "Leaflet" },
   { path: "/map8", text: "圖霸" },
+  { path: "/azure", text: "Azure" },
 ];
 
 const Header = () => {
