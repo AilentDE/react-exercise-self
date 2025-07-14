@@ -87,12 +87,22 @@ This project uses SQLite for data storage, which is **NOT recommended for produc
 
 Create a `.env.local` file with the following variables:
 
+> **Note**: These environment variables are for the Pre-Signed URL upload method. The current implementation uses API Router proxy for uploads, so these variables are optional. You can ignore them if you prefer the current API Router approach.
+
 ```env
 R2_ACCOUNT_ID=your_cloudflare_account_id
 R2_ACCESS_KEY=your_r2_access_key
 R2_SECRET_KEY=your_r2_secret_key
 R2_REGION=auto
 R2_BUCKET_NAME=your_bucket_name
+```
+
+> **Note**: Required
+
+```env
+IMAGE_PROXY_URL=worker-url-for-server
+IMAGE_PROXY_SECRET=signature-key-for-worker
+NEXT_PUBLIC_IMAGE_PROXY_URL=worker-url-for-client
 ```
 
 ### Installation
